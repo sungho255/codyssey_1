@@ -180,7 +180,7 @@ $ docker logs [ID]
 
 ## 8. 컨테이너 실행 실습
 ```
-$ docker hello-world
+$ docker run hello-world
 Unable to find image 'hello-world:latest' locally
 latest: Pulling from library/hello-world
 4f55086f7dd0: Pull complete 
@@ -193,7 +193,7 @@ Hello from Docker!
 
 ```
 # hello-world 실행 성공을 기록한다.
-$ docker -it ubuntu
+$ docker run -it ubuntu
 Unable to find image 'ubuntu:latest' locally
 latest: Pulling from library/ubuntu
 817807f3c64e: Pull complete 
@@ -203,7 +203,7 @@ Status: Downloaded newer image for ubuntu:latest
 root@4948d5041e87:/#
 
 # ubuntu 컨테이너를 실행하고 내부 진입 후 간단 명령(예: ls , echo ) 수행 결과를 기록
-$ ls -l
+$ root@4948d5041e87:/# ls -l
 total 16
 lrwxrwxrwx   1 root root   7 Apr 22  2024 bin -> usr/bin
 drwxr-xr-x   1 root root   0 Apr 22  2024 boot
@@ -261,11 +261,23 @@ root@4948d5041e87:/# echo $$
 | **비유** | **하나의 칠판에 같이 적기** | **각자의 공책에 따로 적기** |
 
 ### run VS start
+
 | 항목 | `docker run` | `docker start` |
 | :--- | :--- | :--- |
 | **기본 정의** | **Create + Start** (생성 후 즉시 실행) | **Restart** (중지된 컨테이너 재시작) |
 | **대상 (Target)** | **이미지 (Image)** | **컨테이너 (Container)** |
 | **컨테이너 ID** | **매번 새로운 ID**가 생성됨 | **기존 ID**를 그대로 유지함 |
+
+### stop VS kill
+
+| 항목 | `docker stop` (Graceful) | `docker kill` (Forced) |
+| :--- | :--- | :--- |
+| **송신 시그널** | `SIGTERM` (15) → `SIGKILL` (9) | `SIGKILL` (9) |
+| **종료 메커니즘** | 프로세스에게 정리(Cleanup) 시간 허용 | 즉시 프로세스 강제 종료 |
+| **기본 대기 시간** | 10초 (설정 가능) | 0초 (즉시) |
+| **데이터 안전성** | 높음 (DB 커넥션 종료, 파일 저장 가능) | 낮음 (데이터 유실 및 인덱스 오염 위험) |
+| **종료 코드 (Exit)** | 정상 종료 시 `0`, 타임아웃 시 `137` | 항상 `137` |
+| **OS 비유** | 시작 메뉴 -> '시스템 종료' 클릭 | 본체의 '전원 버튼' 길게 눌러 강제 종료 |
 
 ## 9. 기존 Docker 기반 커스텀 이미지 제작
 
