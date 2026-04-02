@@ -321,3 +321,39 @@ root@4948d5041e87:/# echo $$
 
 ## 13. 보안 및 개인정보 보호
 
+## 14. 트러블 슈팅
+
+### 1. found character that cannot start any token (vi 편집기에서 YAML 파싱 에러: TAB 문자 사용 문제)
+### 문제
+&emsp;**현상 :** docker-compose.yml 실행 시 found chracter that cannot start any token 에러 발생
+
+&emsp;**영향 :** 도커 컴포즈 엔진이 설정 파일을 해석(parsing)하지 못해 컨테이너 서비스 배포 중단
+
+### 원인 가설
+&emsp;- AML 표준 명세(Spec)상 들여쓰기에 탭(\t) 문자가 포함되어 파서가 이를 유효하지 않은 토큰으로 인식했을 것이다.
+  
+### 확인
+&emsp;가설을 검증하기 위해 vi 편집기 내부에서 제어 문자를 시각화하여 전수 조사를 실시
+
+&emsp;**검증 방법:** vi 명령 모드에서 다음 명령을 실행하여 유령 문자를 노출시킵니다.
+
+```
+:set list
+```
+
+&emsp;**판독 기준:**
+  
+&emsp;라인 시작 부분에 ^I 기호가 보인다면 탭 문자가 존재한다는 증거
+  
+&emsp;라인 끝에 $ 외에 다른 기호가 보인다면 특수문자 삽입
+
+### 해결/대안
+
+&emsp;i 명령 모드에서 다음 명령을 실행
+```
+set nocompatible    " 구형 vi와의 호환성 해제 (현대적 기능 사용)
+set tabstop=4
+set shiftwidth=4
+set expandtab       " 탭을 공백으로 변환
+set number          " 줄 번호 표시 (설정 적용 확인용)
+```
