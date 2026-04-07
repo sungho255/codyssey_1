@@ -423,6 +423,16 @@ Temp Context
 ```
 
 ## 12. Git 설정 및 Github 연동
+```
+% git config --list
+credential.helper=osxkeychain
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+core.ignorecase=true
+core.precomposeunicode=true
+```
 
 ## 13. 보안 및 개인정보 보호
 
