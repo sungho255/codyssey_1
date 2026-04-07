@@ -327,16 +327,16 @@ root@4948d5041e87:/# echo $$
 ```
 FROM nginx:slim
 
-# 1. 기존의 기본 설정 파일 삭제 (매우 중요)
+# 1. 기존의 기본 설정 파일 삭제
 RUN rm /etc/nginx/conf.d/default.conf
 
 # 2. 사용자가 작성한 위 설정을 해당 위치로 복사
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# 3. HTML 파일 복사 (파일명이 my-project.html인지 확인 필수)
+# 3. HTML 파일 복사
 COPY ./html/ /usr/share/nginx/html/
 
-# 권한 설정 (실행 권한 문제 예방)
+# 권한 설정
 # RUN chmod -R 755 /usr/share/nginx/html
 ```
 
@@ -346,7 +346,14 @@ COPY ./html/ /usr/share/nginx/html/
 <h1>Hello World!</h1>
 ```
 ### 2. 결과 스크린샷
-<img src="./img/CustomImageResult.jpg"/>
+```
+$ docker build -t my-nginx5 .
+$ docker run -it -p 8080:80 my-nginx5
+```
+
+
+<img width=700 src="./CustomImageResult.png"/>
+
 
 
 ### 명령어
@@ -374,7 +381,46 @@ COPY ./html/ /usr/share/nginx/html/
 
 ## 10. 포트 매핑 및 접속 증거
 
+```
+$ curl -I http://10.16.5.5:8080   
+HTTP/1.1 200 OK
+Server: nginx/1.29.7
+Date: Tue, 07 Apr 2026 07:01:02 GMT
+Content-Type: text/html
+Content-Length: 22
+Last-Modified: Sun, 05 Apr 2026 09:52:59 GMT
+Connection: keep-alive
+ETag: "69d230fb-16"
+Accept-Ranges: bytes
+```
+
 ## 11. Docker 볼륨 영속성 검증
+
+```
+# docker 볼륨 생성
+$ docker volume create my_nginx_volume
+
+# 컨테이너 연결
+$ docker run -it -p 8080:80 -v my_nginx_volume:/data my-nginx5 sh 
+
+# 컨테이너 삭제 전
+$ cd data
+$ vi tempfile.txt
+$ cat tempfile.txt 
+Temp Context
+
+# 컨태이너 종료
+$ docker ps    
+CONTAINER ID   IMAGE       COMMAND                  CREATED         STATUS         PORTS                                     NAMES
+60a513741ffc   my-nginx5   "/docker-entrypoint.…"   2 minutes ago   Up 2 minutes   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   xenodochial_fermat
+$ docker rm -f xenodochial_fermat
+
+# 컨테이너 삭제 후 
+$ docker run -it -p 8080:80 -v my_nginx_volume:/data my-nginx5 sh
+$ :/# cat tempfile.txt
+Temp Context
+
+```
 
 ## 12. Git 설정 및 Github 연동
 
