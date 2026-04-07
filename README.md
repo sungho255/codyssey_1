@@ -323,8 +323,31 @@ root@4948d5041e87:/# echo $$
 
 ## 9. 기존 Docker 기반 커스텀 이미지 제작
 
-### Dockerfile
-Docker Hub에 없는 커스텀 이미지를 만들 때 사용한다
+### 커스텀 Dockerfile
+```
+FROM nginx:slim
+
+# 1. 기존의 기본 설정 파일 삭제 (매우 중요)
+RUN rm /etc/nginx/conf.d/default.conf
+
+# 2. 사용자가 작성한 위 설정을 해당 위치로 복사
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# 3. HTML 파일 복사 (파일명이 my-project.html인지 확인 필수)
+COPY ./html/ /usr/share/nginx/html/
+
+# 권한 설정 (실행 권한 문제 예방)
+# RUN chmod -R 755 /usr/share/nginx/html
+```
+
+### 커스텀 포인트
+### 1. 정적 콘텐츠
+```
+<h1>Hello World!</h1>
+```
+### 2. 결과 스크린샷
+<img src="./img/CustomImageResult.jpg"/>
+
 
 ### 명령어
 | 지시어 | 설명 | 비고 (Best Practice & Engineering Insight) |
